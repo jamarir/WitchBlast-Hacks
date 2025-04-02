@@ -9,7 +9,7 @@ Inject-x86.exe WitchBlast-CodeCaveDLL.dll 'Witch Blast.exe'
 
 ## Not-TLDR
 
-This repo is nothing more than an implementation of the [Game Hacking Academy "Debugging & Reversing" courses](https://gamehacking.academy/).
+This repo is nothing more than an implementation of the [Game Hacking Academy "Debugging & Reversing", "Programming", and "RTS/RPG Hacks" courses](https://gamehacking.academy/).
 
 [Witch Blast](https://github.com/Cirrus-Minor/witchblast) is one of [many awesome open-source games](https://github.com/michelpereira/awesome-open-source-games), defined as a roguelike. This game is highly inspired by the "[The Binding of Isaac](https://en.wikipedia.org/wiki/The_Binding_of_Isaac_%28video_game%29)" game.
 
