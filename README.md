@@ -21,7 +21,7 @@ These hacks are based upon the 0.7.5 version of the game, and includes:
 - A stat hack, which prints the current enemies' healths on top of the minimap. That way, the player can see how many health the enemies have left.
 - A farm bot hack, which (hardly...) makes the player move toward enemies, and shoot at them if the player has enough range. This hack can be toggled (enabled / disabled) in-game pressing the RIGHT-CTRL key.
 
-To inject this cheat in the game, you must first launch `Witch Blast.exe`, downloadable [here](https://github.com/Cirrus-Minor/witchblast/releases/tag/v0.7.5), and inject the DLL into the process using a [Dll Injector](https://github.com/adamhlt/DLL-Injector/releases/tag/DLL-Injector):
+To inject this cheat in the game, you must first launch `Witch Blast.exe`, downloadable [here](https://github.com/Cirrus-Minor/witchblast/releases/tag/v0.7.5), and inject [the release DLL](https://github.com/jamarir/WitchBlast-Hacks/releases/tag/Debug) into the process using a [Dll Injector](https://github.com/adamhlt/DLL-Injector/releases/tag/DLL-Injector):
 ```
 PS D:\WitchBlast-Hacks> Inject-x86.exe .\WitchBlast-CodeCaveDLL.dll 'Witch Blast.exe'
 [DLL Injector]
