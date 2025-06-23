@@ -432,3 +432,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Obsidian Graph Plugin (Zoottelkeeper)
+_Index_of_*.md
