@@ -7,6 +7,8 @@ Witch Blast 0.7.5 Dll Injection Hacks PoC
 Inject-x86.exe WitchBlast-CodeCaveDLL.dll 'Witch Blast.exe'
 ```
 
+https://github.com/user-attachments/assets/27d7451c-1d42-42b0-8781-70bcc68ecebf
+
 ## Not-TLDR
 
 This repo is nothing more than an implementation of the [Game Hacking Academy "Debugging & Reversing", "Programming", and "RTS/RPG Hacks" courses](https://gamehacking.academy/).
