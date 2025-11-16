@@ -78,17 +78,12 @@ __declspec(naked) void codecave_stat_hack_move_entity() {
 	}
 }
 
-void WINAPI Stat_Hack(DWORD fdwReason) {
-	if (fdwReason == DLL_PROCESS_ATTACH) {
-		// we wanna write any characters in the level text. The max amount to be writable is MAX_ENTITY*MAX_STR_LENGTH.
-		// first we backup the original text
-		VirtualProtect((void*)minimap_text, sizeof(entities_healths_str), PAGE_EXECUTE_READWRITE, &old_protect);
-		memcpy(minimap_text_original, minimap_text, sizeof(entities_healths_str));
+void Stat_Hack() {
+	// we wanna write any characters in the level text. The max amount to be writable is MAX_ENTITY*MAX_STR_LENGTH.
+	// first we backup the original text
+	VirtualProtect((void*)minimap_text, sizeof(entities_healths_str), PAGE_EXECUTE_READWRITE, &old_protect);
+	memcpy(minimap_text_original, minimap_text, sizeof(entities_healths_str));
 
-		// We'll hook a bit after the move entity of Globals, because Globals uses it to get the enemies base addresses already.
-		hook_location = (unsigned char*)((DWORD)process_base + 0x2505);
-		VirtualProtect((void*)hook_location, 5, PAGE_EXECUTE_READWRITE, &old_protect);
-		*hook_location = 0xE9;
-		*(DWORD*)(hook_location + 1) = (DWORD)&codecave_stat_hack_move_entity - ((DWORD)hook_location + 5);
-	}
+	// We'll hook a bit after the move entity of Globals, because Globals uses it to get the enemies base addresses already.
+    Install_CodeCave_Jump_Hook(process_base, 0x2505, 5, codecave_stat_hack_move_entity);
 }

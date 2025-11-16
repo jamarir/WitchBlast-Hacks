@@ -29,9 +29,9 @@ bool is_reset_entities_base_addr = false;
 int i;
 bool known_entity;
 
+// This codecave hooks the move_entity function, where may be any entity (player or enemy) in the current room, at each frame.
+// Used to initialize an array of entities in the current room.
 __declspec(naked) void codecave_move_entity() {
-	// This codecave hooks the move_entity function, where may be any entity (player or enemy) in the current room, at each frame.
-	// Used to initialize an array of entities in the current room.
 	// When hooking, ebx is the moving entity's address base. We save it in our local array (for every entity in the map)
 	__asm {
 		pushf
@@ -140,43 +140,39 @@ __declspec(naked) void reset_entities_base_addr() {
 	}
 }
 
+/*
+* Installs a jmp Code Cave hook, i.e. replaces the original hooked instruction with a jump to our code cave.
+*     process_base: handle to the process in which an instruction must be hooked
+*     hook_location_offset: Offset to the instruction to be hooked from process_base
+*     original_opcode_size: Size of the opcode to be overwritten. Must be at least 5 for the "jmp" to be written.
+*     codecave_function: Pointer to the function containing the code cave
+*/
+void Install_CodeCave_Jump_Hook(IN HANDLE process_base, IN int hook_location_offset, IN int original_opcode_size, IN void* codecave_function) {
+    hook_location = (unsigned char*)((DWORD)process_base + hook_location_offset);
+    VirtualProtect((void*)hook_location, original_opcode_size, PAGE_EXECUTE_READWRITE, &old_protect);
+    *hook_location = 0xE9;
+    // don't forget to PRECISE THE EXACT CASTING SIZE when overwriting the opcode to avoid writing more than needed (DWORD*, BYTE* ...)
+    *(DWORD*)(hook_location + 1) = (DWORD)codecave_function - ((DWORD)hook_location + 5);
+    for (int i = 0; i < original_opcode_size - 5; i++) {
+        *(BYTE*)(hook_location + 5 + i) = { 0x90 };
+    }
+}
 
-void WINAPI Globals_Initialization(DWORD fdwReason) {
-	if (fdwReason == DLL_PROCESS_ATTACH) {
-		// Get the player's health value based off the base pointer
-		player_base_addr = (DWORD*)((DWORD)process_base + 0x341E90);
-		player_base_addr = (DWORD*)(*player_base_addr + 0x74);
-		player_base_addr = (DWORD*)(*player_base_addr + 0x16C);
+void Globals_Initialization() {
+	// Get the player's health value based off the base pointer
+	player_base_addr = (DWORD*)((DWORD)process_base + 0x341E90);
+	player_base_addr = (DWORD*)(*player_base_addr + 0x74);
+	player_base_addr = (DWORD*)(*player_base_addr + 0x16C);
 
-		// First hook: write the enemies' healths in the level text.
-		hook_location = (unsigned char*)((DWORD)process_base + 0x24FF);
-		VirtualProtect((void*)hook_location, 6, PAGE_EXECUTE_READWRITE, &old_protect);
-		*hook_location = 0xE9;
-		// don't forget to PRECISE THE EXACT CASTING SIZE when overwriting the opcode to avoid writing more than needed (DWORD*, BYTE* ...)
-		*(DWORD*)(hook_location + 1) = (DWORD)&codecave_move_entity - ((DWORD)hook_location + 5);
-		// original opcode is 6 bytes, we NOP-pad.
-		*(BYTE*)(hook_location + 5) = { 0x90 };
+	// First hook: write the enemies' healths in the level text.
+    Install_CodeCave_Jump_Hook(process_base, 0x24FF, 6, codecave_move_entity);
 
-		// Second hook: check if the gates are opening to reset the known enemies to NULL, as they're no more enemies in the map.
-		hook_location = (unsigned char*)((DWORD)process_base + 0xAFDF9);
-		VirtualProtect((void*)hook_location, 5, PAGE_EXECUTE_READWRITE, &old_protect);
-		*hook_location = 0xE9;
-		*(DWORD*)(hook_location + 1) = (DWORD)&codecave_open_gates - ((DWORD)hook_location + 5);
+	// Second hook: check if the gates are opening to reset the known enemies to NULL, as they're no more enemies in the map.
+    Install_CodeCave_Jump_Hook(process_base, 0xAFDF9, 5, codecave_open_gates);
 
-		// Third hook: check if the player died to reset the known enemies to NULL, as we're no longer looking for the StatHack.
-		hook_location = (unsigned char*)((DWORD)process_base + 0x4E55);
-		VirtualProtect((void*)hook_location, 10, PAGE_EXECUTE_READWRITE, &old_protect);
-		*hook_location = 0xE9; // 1 byte written
-		*(DWORD*)(hook_location + 1) = (DWORD)&codecave_kill_entity - ((DWORD)hook_location + 5); // 4 bytes written
-		// original opcode is 10 (1+4+5) bytes, we NOP-pad it.
-		for (i = 0; i < 4; i++) {
-			*(BYTE*)(hook_location + 5 + i) = { 0x90 }; // 5 byte written
-		}
+	 // Third hook: check if the player died to reset the known enemies to NULL, as we're no longer looking for the StatHack.
+    Install_CodeCave_Jump_Hook(process_base, 0x4E55, 10, codecave_kill_entity);
 
-		// Fourth hook: check if a new game is loaded to reset the known enemies to NULL, as there might be enemies left in the map if we die ("Use-After-Reallocated" pointer crash).
-		hook_location = (unsigned char*)((DWORD)process_base + 0x9A19A);
-		VirtualProtect((void*)hook_location, 5, PAGE_EXECUTE_READWRITE, &old_protect);
-		*hook_location = 0xE9;
-		*(DWORD*)(hook_location + 1) = (DWORD)&codecave_load_level - ((DWORD)hook_location + 5);
-	}
+	// Fourth hook: check if a new game is loaded to reset the known enemies to NULL, as there might be enemies left in the map if we die ("Use-After-Reallocated" pointer crash).
+    Install_CodeCave_Jump_Hook(process_base, 0x9A19A, 5, codecave_load_level);
 }

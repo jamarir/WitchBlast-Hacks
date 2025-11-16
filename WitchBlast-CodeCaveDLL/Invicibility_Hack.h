@@ -1,7 +1,4 @@
-#ifndef INVICIBILITYHACK_H
-#define INVICIBILITYHACK_H
+#pragma once
 #include "Globals.h"
 
-void WINAPI Invicibility_Hack(DWORD fdwReason);
-
-#endif
+void Invicibility_Hack();

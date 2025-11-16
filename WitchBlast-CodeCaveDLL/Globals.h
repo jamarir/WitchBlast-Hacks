@@ -1,6 +1,4 @@
-#ifndef GLOBALS_H
-#define GLOBALS_H
-
+#pragma once
 #include <windows.h>
 #include <stdio.h>
 
@@ -21,6 +19,5 @@ extern bool is_reset_entities_base_addr;
 extern int i;
 
 void reset_entities_base_addr();
-void WINAPI Globals_Initialization(DWORD fdwReason);
-
-#endif
+void Install_CodeCave_Jump_Hook(IN HANDLE process_base, IN int hook_location_offset, IN int original_opcode_size, IN void* codecave_function);
+void Globals_Initialization();

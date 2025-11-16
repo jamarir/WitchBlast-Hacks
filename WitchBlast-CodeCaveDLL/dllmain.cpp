@@ -4,18 +4,20 @@
 #include "FarmBot_Hack.h"
 
 /*
-Just another Game Hack project.
+Just another Game Hacking project.
 */
 
-// N.B.: CPP files MUST be configured with "Not Using Precompiled Headers".
+// N.B.: 
+//      CPP files MUST be configured with "Not Using Precompiled Headers".
+//      The following Post-Build Event can be used to automatically hook the process: "powershell -c "Start-Process -WorkingDir 'D:\Witch Blast v0.7.5\' -FilePath '.\Witch Blast.exe'; Start-Sleep 2; Inject-x86.exe $(TargetPath) 'Witch Blast.exe'""
 BOOL WINAPI DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 {
-    Globals_Initialization(fdwReason);
-
-    Gold_Hack(fdwReason);
-    Invicibility_Hack(fdwReason);
-    Stat_Hack(fdwReason);
-    FarmBot_Hack(fdwReason);
-
+    if (fdwReason == DLL_PROCESS_ATTACH) {
+        Globals_Initialization();
+        Gold_Hack();
+        Invicibility_Hack();
+        Stat_Hack();
+        FarmBot_Hack();
+    }
     return true;
 }

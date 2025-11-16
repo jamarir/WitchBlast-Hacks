@@ -11,11 +11,9 @@ Original opcode:
 patching the last byte would increase a coin's value.
 */
 
-void WINAPI Gold_Hack(DWORD fdwReason) {
-	if (fdwReason == DLL_PROCESS_ATTACH) {
-		hook_location = (unsigned char*)((DWORD)process_base + 0x4A7F9);
-		VirtualProtect((void*)hook_location, 1, PAGE_EXECUTE_READWRITE, &old_protect);
-		// one coin is valuable as 10
-		*(BYTE*)(hook_location - 1) = { 0x0a };
-	}
+void Gold_Hack() {
+    hook_location = (unsigned char*)((DWORD)process_base + 0x4A7F9);
+    VirtualProtect((void*)hook_location, 1, PAGE_EXECUTE_READWRITE, &old_protect);
+    // one coin is valuable as 10
+    *(BYTE*)(hook_location - 1) = { 0x0a };
 }

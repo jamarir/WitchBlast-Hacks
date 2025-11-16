@@ -1,7 +1,4 @@
-#ifndef STATHACK_H
-#define STATHACK_H
+#pragma once
 #include "Globals.h"
 
-void WINAPI Stat_Hack(DWORD fdwReason);
-
-#endif
+void Stat_Hack();

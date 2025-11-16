@@ -1,7 +1,4 @@
-#ifndef GOLDHACK_H
-#define GOLDHACK_H
+#pragma once
 #include "Globals.h"
 
-void WINAPI Gold_Hack(DWORD fdwReason);
-
-#endif
+void Gold_Hack();

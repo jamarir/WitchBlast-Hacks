@@ -1,7 +1,4 @@
-#ifndef FARMBOTHACK_H
-#define FARMBOTHACK_H
+#pragma once
 #include "Globals.h"
 
-void WINAPI FarmBot_Hack(DWORD fdwReason);
-
-#endif
+void FarmBot_Hack();
